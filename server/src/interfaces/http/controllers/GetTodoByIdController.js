@@ -1,0 +1,29 @@
+import express from 'express';
+import GetTodoByIdReadModel from '../../../domain/readmodel/GetTodoByIdReadModel.js';
+
+const router = express.Router();
+
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: 'Todo ID is required.' });
+    }
+
+    const todo = await GetTodoByIdReadModel.query(id);
+
+    if (todo) {
+      res.status(200).json([todo]);
+    } else {
+      res.status(200).json([]);
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+export default {
+  routeBase: '/get-todo-by-id',
+  router,
+};

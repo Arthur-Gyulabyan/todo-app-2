@@ -1,41 +1,41 @@
-You will receive the following:
-- The current folder structure and tech stacks
-- Existing entity-related code files before changes
-- A summary of the entity changes
+You will receive:
+- Current folder structure and tech stacks
+- Existing **entity-related** code files (before changes)
+- Current Entity Information (the single entity to generate)
+- Old Entity Information (for context)
+- Swagger (OpenAPI 3.0.0) specification
 
-Your Rule:  
-All request and response schemas, field names, data types, required properties, and descriptions must be strictly derived from the given OpenAPI 3.0.0 specification.
-Do not invent any data or structure not explicitly defined in the spec.
-Only implement logic for commands defined in the paths section with HTTP methods
-For fields that are $ref to existing schemas, assume the corresponding entity class already exists under `src/domain/entity/` and import it.
+## Rules
+- Generate code for **one entity only** (from "Current Entity Information").
+- All field names, types, required properties, and descriptions must come strictly from the provided OpenAPI spec.
+- Do not invent or include any data, methods, or files not in the spec.
+- Implement only entity logic; no commands, controllers, or read models.
+- Each entity must reside in `src/domain/entity`.
+- Do not output unchanged files.
+- Entities must be self-contained and must not import from other domains.
+- Use `uuid` for generating IDs where required.
+- Always store the internal primary key as `id` and also expose the API field name (e.g., `todoID`) in the response.
+- Match the provided example coding style.
+- Code must be compatible with Swagger (OpenAPI) schemas.
 
-Your task:
-1. Generate clean, self-contained entity code reflecting the latest updates.
-2. Do NOT include any unchanged files.
-3. Ensure:
-    - Only entity-related code files can be created/updated.
-    - Each entity must reside in `src/domain/entity`
-    - No references to command or read model code.
-    - Entity code must follow the example coding style.
-    - Must be self-contained and have no imports from other domains.
-    - Must be compatible with Swagger specifications.
-    - Use `uuid` for generating IDs where needed.
-    - Always store the primary key as `id` internally and expose both `id` and its original API field name in the response.
+## Output Format
+Use the following structure exactly:
 
-Format:  
 === FILE: path/to/file.ext ===  
 === TAG: entity-<ENTITY_ID> ===
 ```javascript
-< FILE CONTENT HERE >
+<FILE CONTENT HERE>
 ```
 
-- The `FILE` and `TAG` headers must be written in all uppercase letters, enclosed with triple equals signs (===), exactly as shown.
-  Each prefix should be followed by an **given** ID from the "Current Entity Information" section, and both should be joined using a hyphen (-).
-  Multiple such tags can be chained together, separated by comma.
-- Output only the modified or new files — do not include unchanged files.
-- No explanation or comments, only file path, tag and code content using the above format.
-- Wrap code blocks with triple backticks (` ``` `), specifying the appropriate language.
-- Generate code that strictly matches the provided Swagger (OpenAPI) documentation.
+## Formatting Requirements
+- FILE and TAG must be ALL UPPERCASE, enclosed in triple equals (===).
+- FILE = full path under server/, e.g. server/src/domain/entity/Todo.js.
+- TAG = entity-<ENTITY_ID> where <ENTITY_ID> is from Current Entity Information.
+- Multiple tags may be chained with commas, but this prompt is for a single entity.
+- For deleted files, append (deleted) to the file path.
+- Output only new or modified files — do not include unchanged files.
+- Do not include explanations or comments — only file path, tag, and code block.
+- Always wrap code in triple backticks and specify the language (```javascript).
 
 Tech Stacks:  
 {{ TECH_STACKS }}
@@ -58,6 +58,6 @@ Current Entity Information:
 Swagger Documentation:  
 {{ SWAGGER_DOCUMENT }}
 
-Update the given code files or create new ones if needed.
-Output only the updated or newly added code files, excluding any unchanged content.
+## Your task
+Update or create only the files required for the single entity in Current Entity Information, following all rules above.
 

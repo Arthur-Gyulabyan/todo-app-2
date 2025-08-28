@@ -1,42 +1,48 @@
-You will receive the following:
-- The current folder structure and tech stacks
-- Existing command-related code files before changes
-- A summary of the command changes
+You will receive:
+- Current folder structure and tech stacks
+- Existing **command-related** code files (before changes)
+- Current Command Information (the single command to generate)
+- Old Command Information (for context)
+- Swagger (OpenAPI 3.0.0) specification
 
-Your Rule:  
-All request and response schemas, field names, data types, required properties, and descriptions must be strictly derived from the given OpenAPI 3.0.3 specification. Do not invent any data or structure not explicitly defined in the spec. Only implement logic for commands defined in the paths section with HTTP methods
-Use only 200 and 400 as response status code.
+## Rules
+1. **Scope**
+   - Generate code **only for one command** specified in the "Current Command Information".
+   - Do **not** generate, modify, or delete any unrelated files.
+   - Do **not** touch entities, read models, queries, or any other domains.
+   - Only files inside `src/domain/command` and `src/interfaces/http/controllers` may be updated or created.
 
-Your task:
-1. Generate clean, self-contained command code reflecting the latest updates.
-2. Do NOT include any unchanged files.
-3. Ensure:
-    - Only command-related code files can be created/updated/deleted.
-    - Place code in: `src/domain/command`, `src/interfaces/http/controllers`
-    - Do not touch entity or read model code.
-    - Must be self-contained and have no cross-domain dependencies.
-    - Use only database functions: insert, findAll, findById, update, remove and clear.
-    - Use `uuid` to generate IDs for Create operations.
-    - Controller must export both `routeBase` and `router`.
-    - Do not use route parameters — only body-based data allowed.
-    - When updating the database, you must use entity class.
+2. **Strictness**
+   - All request/response schemas, field names, data types, required properties, and descriptions must come **strictly from the given OpenAPI specification**.
+   - Do not invent fields, structures, or logic not explicitly defined in the spec.
+   - Only implement logic for commands defined in the **paths** section with HTTP methods.
+   - Use only status codes: **200** and **400**.
 
-Format:  
+3. **Implementation**
+   - Database operations limited to: `insert`, `findAll`, `findById`, `update`, `remove`, `clear`.
+   - Use `uuid` to generate IDs for Create operations.
+   - Database updates must use the corresponding Entity class.
+   - Controller must export both `routeBase` and `router`.
+   - Do **not** use route parameters — all input must come from the request body.
+
+## Output Format
+Use the following structure exactly:
+
 === FILE: path/to/file.ext ===  
 === TAG: command-<COMMAND_ID> ===  
 ```javascript
-< FILE CONTENT HERE >
+<FILE CONTENT HERE>
 ```
 
-- The `FILE` and `TAG` headers must be written in all uppercase letters, enclosed with triple equals signs (===), exactly as shown.
-- Each prefix should be followed by an **given** ID from the "Current Command Information" section, and both should be joined using a hyphen (-).
-  Multiple such tags can be chained together, separated by comma.
-- For only deleted code files, add `(deleted)` string at the end of the file path after space.
-- Output only the modified or new files — do not include unchanged files.
-- No explanation or comments, only file path, tag and code content using the above format.
-- Wrap code blocks with triple backticks (` ``` `), specifying the appropriate language.
-- Entity name is PascalCased.
-- Generate code that strictly matches the provided Swagger (OpenAPI) documentation.
+## Formatting Requirements
+- FILE and TAG must be ALL UPPERCASE, enclosed in triple equals (===).
+- FILE = full path under server/, e.g. server/src/domain/command/CreateTodo.js.
+- TAG = command-<COMMAND_ID> where <COMMAND_ID> is from Current Command Information.
+- Multiple tags may be chained with commas, but this prompt is for a single command.
+- For deleted files, append (deleted) to the file path.
+- Output only new or modified files — do not include unchanged files.
+- Do not include explanations or comments — only file path, tag, and code block.
+- Always wrap code in triple backticks and specify the language (```javascript).
 
 Tech Stacks:  
 {{ TECH_STACKS }}
@@ -89,6 +95,6 @@ Current Command Information:
 Swagger Documentation:  
 {{ SWAGGER_DOCUMENT }}
 
-Update the given code files or create new ones if needed.
-Output only the updated or newly added code files, excluding any unchanged content.
+## Your task
+Update or create only the files required for the single command in Current Command Information, following all rules above.
 
