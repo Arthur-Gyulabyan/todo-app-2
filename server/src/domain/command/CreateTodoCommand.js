@@ -6,14 +6,7 @@ class CreateTodoCommand {
   static async execute({ task }) {
     const todoID = uuidv4();
     const now = new Date().toISOString();
-    
-    const todo = new Todo({ 
-      todoID, 
-      task, 
-      createdAt: now, 
-      updatedAt: now 
-    });
-
+    const todo = new Todo({ todoID, task, createdAt: now, updatedAt: now });
     await db.insert('Todo', todo.toJSON());
     return todo.toJSON();
   }

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Todo App 2 API Specification
-  version: '53'
+  version: '56'
   description: API documentation for the Todo App 2 bounded context.
 servers:
   - url: /api/v1
