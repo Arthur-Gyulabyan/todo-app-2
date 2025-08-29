@@ -29,7 +29,7 @@ Use the following structure exactly:
 
 ## Formatting Requirements
 - FILE and TAG must be ALL UPPERCASE, enclosed in triple equals (===).
-- FILE = full path under server/, e.g. server/src/domain/entity/Todo.js.
+- FILE = full path under src/, e.g. src/domain/entity/Todo.js.
 - TAG = entity-<ENTITY_ID> where <ENTITY_ID> is from Current Entity Information.
 - Multiple tags may be chained with commas, but this prompt is for a single entity.
 - For deleted files, append (deleted) to the file path.
