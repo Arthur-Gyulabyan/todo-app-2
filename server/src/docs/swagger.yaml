@@ -1,14 +1,14 @@
 openapi: 3.0.3
 info:
-  title: Todo App 2 API Specification
-  version: '61'
-  description: API documentation for the Todo App 2 bounded context.
+  title: Todo App API Specification
+  version: '71'
+  description: API documentation for the Todo App bounded context.
 servers:
   - url: /api/v1
     description: Development Server
 tags:
-  - name: TodoApp2
-    description: Operations related to the TodoApp2 bounded context.
+  - name: TodoApp
+    description: Operations related to the TodoApp bounded context.
 paths:
   /create-todo:
     post:
@@ -16,7 +16,7 @@ paths:
       description: Executes the "Create Todo" command. ...
       operationId: createTodo
       tags:
-        - TodoApp2
+        - TodoApp
       responses:
         '200':
           description: 'OK: The resource was updated successfully.'
@@ -38,7 +38,7 @@ paths:
       description: Executes the "Update Todo" command. ...
       operationId: updateTodo
       tags:
-        - TodoApp2
+        - TodoApp
       responses:
         '200':
           description: 'OK: The resource was updated successfully.'
@@ -60,7 +60,7 @@ paths:
       description: Executes the "Delete Todo" command. ...
       operationId: deleteTodo
       tags:
-        - TodoApp2
+        - TodoApp
       responses:
         '200':
           description: 'OK: The resource was updated successfully.'
@@ -82,7 +82,7 @@ paths:
       description: Retrieves data based on the "Get All Todos" query. This is a synchronous query operation.
       operationId: getAllTodos
       tags:
-        - TodoApp2
+        - TodoApp
       responses:
         '200':
           description: Successful retrieval of data.
@@ -100,7 +100,7 @@ paths:
       description: Retrieves data based on the "Get Todo By ID" query. This is a synchronous query operation.
       operationId: getTodoByID
       tags:
-        - TodoApp2
+        - TodoApp
       responses:
         '200':
           description: Successful retrieval of data.

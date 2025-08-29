@@ -8,13 +8,16 @@ You will receive:
 ## Rules
 1. **Scope**
    - Generate code **only for one command** specified in the "Current Command Information".
+   - Crucially, implement the business logic described in the `gwtDescriptions` array within the Command Information. This is the primary source for the command's behavior.
    - Do **not** generate, modify, or delete any unrelated files.
    - Do **not** touch entities, read models, queries, or any other domains.
    - Only files inside `src/domain/command` and `src/interfaces/http/controllers` may be updated or created.
 
 2. **Strictness**
    - All request/response schemas, field names, data types, required properties, and descriptions must come **strictly from the given OpenAPI specification**.
+   - The business logic, validations, and outcomes must come **strictly from the `gwtDescriptions`**.
    - Do not invent fields, structures, or logic not explicitly defined in the spec.
+   - Do not invent logic not explicitly defined in the spec or the GWT descriptions.
    - Only implement logic for commands defined in the **paths** section with HTTP methods.
    - Use only status codes: **200** and **400**.
 
@@ -96,5 +99,5 @@ Swagger Documentation:
 {{ SWAGGER_DOCUMENT }}
 
 ## Your task
-Update or create only the files required for the single command in Current Command Information, following all rules above.
+Update or create only the files required for the single command in Current Command Information, incorporating the business logic from the GWT scenarios and following all rules above.
 

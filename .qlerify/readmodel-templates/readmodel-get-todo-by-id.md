@@ -1,20 +1,22 @@
 You will receive:
 - Current folder structure and tech stacks
 - Existing **read model-related** code files (before changes)
-- Current ReadModel Information (the single read model to generate)
+- Current ReadModel Information (which includes GWT descriptions)
 - Old ReadModel Information (for context)
 - Swagger (OpenAPI 3.0.x) specification
 
 ## Rules
 1. **Scope**
    - Generate code **only for one read model** specified in the "Current ReadModel Information".
+   - Crucially, implement the business logic described in the `gwtDescriptions` array within the ReadModel Information. This will define filtering, sorting, or data shaping requirements.
    - Do **not** generate, modify, or delete any unrelated files.
    - Do **not** touch commands, entities, or any other domains.
    - Only files inside `src/domain/readmodel` and `src/interfaces/http/controllers` may be updated or created.
 
 2. **Strictness**
-   - All request/response schemas, field names, data types, required properties, and descriptions must come **strictly from the given OpenAPI specification**.
-   - Do not invent fields, structures, or logic not explicitly defined in the spec.
+   - All request/response schemas, field names, and data types must come **strictly from the given OpenAPI specification**.
+   - The query logic, including any specific data filtering or transformations, must come **strictly from the `gwtDescriptions`**.
+   - Do not invent logic not explicitly defined in the spec or the GWT descriptions.
    - Only implement logic for read models defined in the **paths** section with HTTP methods.
    - Use only status codes: **200** and **400**.
 
@@ -95,5 +97,5 @@ Swagger Documentation:
 {{ SWAGGER_DOCUMENT }}
 
 ## Your task
-Update or create only the files required for the single read model in Current ReadModel Information, following all rules above.
+Update or create only the files required for the single read model in Current ReadModel Information, incorporating the business logic from the GWT scenarios and following all rules above.
 
