@@ -43,8 +43,8 @@ defineFeature(feature, test => {
         expect(() => new Date(createdTodo.createdAt).toISOString()).not.toThrow();
         expect(() => new Date(createdTodo.updatedAt).toISOString()).not.toThrow();
 
-        // Ensure createdAt and updatedAt are roughly the current time (2025-08-29T11:01:28.626Z)
-        const expectedDate = new Date('2025-08-29T11:01:28.626Z');
+        // Ensure createdAt and updatedAt are roughly the current time
+        const expectedDate = new Date();
         const receivedCreatedAt = new Date(createdTodo.createdAt);
         const receivedUpdatedAt = new Date(createdTodo.updatedAt);
 
