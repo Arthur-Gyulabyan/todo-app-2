@@ -2,10 +2,15 @@ import db from '../../infrastructure/db/index.js';
 
 class GetAllTodosReadModel {
   static async query() {
-    // The GWT description provided ("Given a client wants to create a new todo, when the task is longer than 40 characters, then the task should not be created.")
-    // describes a command-side validation rule and is not applicable to a read model for fetching all todos.
-    // Therefore, this read model simply retrieves all 'Todo' items without additional filtering based on this GWT.
-    return await db.findAll('Todo');
+    const todosFromDb = await db.findAll('Todo'); 
+    
+    // Map database fields (e.g., 'Todo ID') to OpenAPI specification fields (e.g., 'todoID')
+    return todosFromDb.map(todo => ({
+      todoID: todo['Todo ID'],
+      task: todo['Task'],
+      createdAt: todo['Created At'],
+      updatedAt: todo['Updated At'],
+    }));
   }
 }
 

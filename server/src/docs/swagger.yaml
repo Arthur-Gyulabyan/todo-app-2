@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Todo App API Specification
-  version: '101'
+  version: '103'
   description: API documentation for the Todo App bounded context.
 servers:
   - url: /api/v1
