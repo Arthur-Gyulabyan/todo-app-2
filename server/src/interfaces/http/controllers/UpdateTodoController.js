@@ -1,11 +1,12 @@
 import express from 'express';
-import CreateTodoCommand from '../../../domain/command/CreateTodoCommand.js';
+import UpdateTodoCommand from '../../../domain/command/UpdateTodoCommand.js';
 
 const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const result = await CreateTodoCommand.execute({ task: req.body.task });
+    const { todoID, task } = req.body;
+    const result = await UpdateTodoCommand.execute({ todoID, task });
     res.status(200).json(result);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -13,6 +14,6 @@ router.post('/', async (req, res) => {
 });
 
 export default {
-  routeBase: '/create-todo',
+  routeBase: '/update-todo',
   router,
 };

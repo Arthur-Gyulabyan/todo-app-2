@@ -1,7 +1,4 @@
 Feature: Create Todo
-  As a client
-  I want to create a todo
-  So that I can manage my tasks
 
   Scenario: Given a client wants to create a new todo, when the task is longer than 40 characters, then the task should not be created.
     Given a client wants to create a new todo

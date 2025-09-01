@@ -7,7 +7,7 @@ class Todo {
     }
 
     this.id = todoID; // Internal primary key
-    this.todoID = todoID; // API field name
+    this.todoID = todoID;
     this.task = task;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;

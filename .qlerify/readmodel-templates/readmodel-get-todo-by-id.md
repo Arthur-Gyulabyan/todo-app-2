@@ -1,7 +1,7 @@
 You will receive:
 - Current folder structure and tech stacks
 - Existing **read model-related** code files (before changes)
-- Current ReadModel Information (which includes GWT descriptions)
+- Current ReadModel Information (the single read model to generate)
 - Old ReadModel Information (for context)
 - Swagger (OpenAPI 3.0.x) specification
 

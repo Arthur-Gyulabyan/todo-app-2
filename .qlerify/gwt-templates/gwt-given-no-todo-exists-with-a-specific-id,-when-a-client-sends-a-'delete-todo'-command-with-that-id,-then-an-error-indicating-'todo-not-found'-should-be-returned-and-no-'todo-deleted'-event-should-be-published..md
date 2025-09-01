@@ -57,9 +57,6 @@ Use the following structure exactly:
 - No explanations or comments — only file path, tag, and code block.
 - Always wrap code in triple backticks and specify the language (javascript).
 
-OpenAPI Specification:  
-{{ SWAGGER_DOCUMENT }}
-
 Code Template:  
 {{ EXAMPLE_CODE }}
 
@@ -68,6 +65,9 @@ Old Given-When-Then Information:
 
 Current Given-When-Then Information:  
 {{ LATEST_INFO }}
+
+Swagger Documentation:  
+{{ SWAGGER_DOCUMENT }}
 
 ## Your task
 Generate the .feature file and its matching .test.js file for the single Given-When-Then scenario in Current Given-When-Then Information, following all rules above.
