@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Todo App API Specification
-  version: '106'
+  version: '123'
   description: API documentation for the Todo App bounded context.
 servers:
   - url: /api/v1
@@ -122,9 +122,9 @@ components:
       type: object
       description: Represents a Todo in the system.
       properties:
-        todoID:
+        id:
           type: string
-          description: The Todo ID of the Todo.
+          description: The id of the Todo.
           example: todo-4001
         task:
           type: string
@@ -151,7 +151,7 @@ components:
     UpdateTodoRequest:
       type: object
       properties:
-        todoID:
+        id:
           type: string
           example: todo-4001
         task:
@@ -162,12 +162,12 @@ components:
     DeleteTodoRequest:
       type: object
       properties:
-        todoID:
+        id:
           type: string
           example: todo-4001
   parameters:
     TodoId:
-      name: todoID
+      name: id
       in: path
       required: true
       description: The unique identifier for the Todo.

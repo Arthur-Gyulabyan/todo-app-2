@@ -1,30 +1,15 @@
-/**
- * @file src/components/shared/PageHeader.tsx
- * @description A reusable header component for pages, including title, description, and optional action buttons.
- */
-
-import { Separator } from "@/components/ui/separator";
+import React from 'react';
 
 interface PageHeaderProps {
-  /** The main title of the page. */
   title: string;
-  /** An optional descriptive subtitle for the page. */
   description?: string;
-  /** Any React nodes to be rendered on the right side of the header (e.g., buttons). */
-  children?: React.ReactNode;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title, description, children }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ title, description }) => {
   return (
-    <div className="space-y-2">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
-          {description && <p className="text-muted-foreground">{description}</p>}
-        </div>
-        {children}
-      </div>
-      <Separator />
+    <div className="mb-8">
+      <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">{title}</h1>
+      {description && <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{description}</p>}
     </div>
   );
 };

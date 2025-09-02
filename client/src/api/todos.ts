@@ -1,118 +1,80 @@
-/**
- * @file src/api/todos.ts
- * @description TanStack Query hooks for all Todo-related API operations.
- *              Includes hooks for fetching, creating, updating, and deleting todos.
- */
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { Todo, CreateTodoRequest, UpdateTodoRequest, DeleteTodoRequest } from "@/lib/validators";
-import { useToast } from "@/hooks/use-toast";
+import {
+  Todo,
+  CreateTodoRequest,
+  UpdateTodoRequest,
+  DeleteTodoRequest,
+  ApiError,
+} from "@/lib/validators";
 
-const TODO_QUERY_KEY = "todos"; // Define a consistent query key
+const TODO_QUERY_KEY = ["todos"];
 
-/**
- * Hook to fetch all todo items.
- * Corresponds to `GET /get-all-todos`.
- */
+// GET All Todos
 export const useGetAllTodos = () => {
-  return useQuery<Todo[], Error>({
-    queryKey: [TODO_QUERY_KEY],
-    queryFn: () => api.get("/get-all-todos"),
+  return useQuery<Todo[], ApiError>({
+    queryKey: TODO_QUERY_KEY,
+    queryFn: async () => {
+      const { data } = await api.get<Todo[]>("/get-all-todos");
+      return data;
+    },
   });
 };
 
-/**
- * Hook to fetch a single todo item by its ID.
- * Corresponds to `GET /get-todo-by-id`.
- * Assumes `todoID` is passed as a query parameter based on common patterns for this endpoint name.
- */
-export const useGetTodoById = (todoID: string | undefined) => {
-  return useQuery<Todo, Error>({
-    queryKey: [TODO_QUERY_KEY, todoID],
-    queryFn: () => api.get(`/get-todo-by-id`, { todoID }),
-    enabled: !!todoID, // Only fetch if todoID is provided
+// GET Todo By ID (assuming query parameter 'id' based on common practice, as OpenAPI path does not specify one)
+export const useGetTodoById = (id: string | null) => {
+  return useQuery<Todo, ApiError>({
+    queryKey: [...TODO_QUERY_KEY, id],
+    queryFn: async () => {
+      const { data } = await api.get<Todo>("/get-todo-by-id", {
+        params: { id },
+      });
+      return data;
+    },
+    enabled: !!id, // Only fetch if ID is provided
   });
 };
 
-/**
- * Hook to create a new todo item.
- * Corresponds to `POST /create-todo`.
- */
+// POST Create Todo
 export const useCreateTodo = () => {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  return useMutation<Todo, Error, CreateTodoRequest>({
-    mutationFn: (newTodo) => api.post("/create-todo", newTodo),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: [TODO_QUERY_KEY] }); // Invalidate all todos to refetch
-      toast({
-        title: "Success",
-        description: `Todo "${data.task}" created successfully.`,
-      });
+  return useMutation<Todo, ApiError, CreateTodoRequest>({
+    mutationFn: async (newTodo: CreateTodoRequest) => {
+      const { data } = await api.post<Todo>("/create-todo", newTodo);
+      return data;
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create todo.",
-        variant: "destructive",
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TODO_QUERY_KEY });
     },
   });
 };
 
-/**
- * Hook to update an existing todo item.
- * Corresponds to `POST /update-todo`.
- */
+// POST Update Todo (OpenAPI uses POST for update)
 export const useUpdateTodo = () => {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  return useMutation<Todo, Error, UpdateTodoRequest>({
-    mutationFn: (updatedTodo) => api.post("/update-todo", updatedTodo),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: [TODO_QUERY_KEY] }); // Invalidate all todos
-      queryClient.invalidateQueries({ queryKey: [TODO_QUERY_KEY, data.todoID] }); // Invalidate specific todo
-      toast({
-        title: "Success",
-        description: `Todo "${data.task}" updated successfully.`,
-      });
+  return useMutation<Todo, ApiError, UpdateTodoRequest>({
+    mutationFn: async (updatedTodo: UpdateTodoRequest) => {
+      const { data } = await api.post<Todo>("/update-todo", updatedTodo);
+      return data;
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update todo.",
-        variant: "destructive",
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TODO_QUERY_KEY });
+      // Also invalidate specific todo if detail page exists
+      queryClient.invalidateQueries({ queryKey: [...TODO_QUERY_KEY, updatedTodo.id] });
     },
   });
 };
 
-/**
- * Hook to delete a todo item.
- * Corresponds to `POST /delete-todo`.
- */
+// POST Delete Todo (OpenAPI uses POST for delete)
 export const useDeleteTodo = () => {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  return useMutation<Todo, Error, DeleteTodoRequest>({
-    mutationFn: (deleteRequest) => api.post("/delete-todo", deleteRequest),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: [TODO_QUERY_KEY] }); // Invalidate all todos
-      toast({
-        title: "Success",
-        description: `Todo "${data.task}" deleted successfully.`,
-      });
+  return useMutation<Todo, ApiError, DeleteTodoRequest>({
+    mutationFn: async (todoToDelete: DeleteTodoRequest) => {
+      const { data } = await api.post<Todo>("/delete-todo", todoToDelete);
+      return data;
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete todo.",
-        variant: "destructive",
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TODO_QUERY_KEY });
     },
   });
 };

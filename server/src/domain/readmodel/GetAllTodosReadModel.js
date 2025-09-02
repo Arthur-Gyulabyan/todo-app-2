@@ -2,7 +2,14 @@ import db from '../../infrastructure/db/index.js';
 
 class GetAllTodosReadModel {
   static async query() {
-    return await db.findAll('Todo');
+    const todos = await db.findAll('Todo');
+    // Transform field names to match OpenAPI specification (camelCase)
+    return todos.map(todo => ({
+      id: todo.id,
+      task: todo['Task'],
+      createdAt: todo['Created At'],
+      updatedAt: todo['Updated At'],
+    }));
   }
 }
 

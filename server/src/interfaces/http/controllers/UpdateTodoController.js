@@ -5,16 +5,16 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { todoID, task } = req.body;
-    const result = await UpdateTodoCommand.execute({ todoID, task });
-    res.status(200).json(result);
+    const { id, task } = req.body; // id and task from OpenAPI spec requestBody
+
+    const result = await UpdateTodoCommand.execute({ id, task });
+    res.status(200).json(result); // OpenAPI spec for success: 200
   } catch (err) {
-    // Only use 400 for errors, as per rules.
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err.message }); // OpenAPI spec for error: 400
   }
 });
 
 export default {
-  routeBase: '/update-todo',
+  routeBase: '/update-todo', // From OpenAPI spec path: /update-todo
   router,
 };

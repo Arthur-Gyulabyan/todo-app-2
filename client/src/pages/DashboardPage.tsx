@@ -1,20 +1,17 @@
-/**
- * @file src/pages/DashboardPage.tsx
- * @description The main dashboard page of the Todo application.
- *              Displays a header and integrates the TodoManagement feature component.
- */
-
+import React from "react";
 import PageHeader from "@/components/shared/PageHeader";
-import { TodoManagement } from "@/features/todo-management/TodoManagement";
+import { TodoToolbar } from "@/features/todo-management/components/TodoToolbar";
+import { TodoListTable } from "@/features/todo-management/components/TodoListTable";
 
 const DashboardPage: React.FC = () => {
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
+    <div className="container mx-auto py-8">
       <PageHeader
-        title="Todo Dashboard"
-        description="Manage your daily tasks and boost your productivity."
+        title="Todo List"
+        description="Manage your daily tasks and keep track of your progress."
       />
-      <TodoManagement />
+      <TodoToolbar />
+      <TodoListTable />
     </div>
   );
 };

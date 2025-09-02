@@ -1,13 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 
 class Todo {
-  constructor({ todoID = uuidv4(), task, createdAt = new Date(), updatedAt = new Date() }) {
-    if (!task) {
-      throw new Error('Task is required');
-    }
+  constructor({ id = uuidv4(), task, createdAt = new Date(), updatedAt = new Date() }) {
+    if (!task) throw new Error('Task is required');
 
-    this.id = todoID;
-    this.todoID = todoID;
+    this.id = id;
     this.task = task;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
@@ -16,10 +13,9 @@ class Todo {
   toJSON() {
     return {
       id: this.id,
-      todoID: this.todoID,
       task: this.task,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString()
     };
   }
 }
