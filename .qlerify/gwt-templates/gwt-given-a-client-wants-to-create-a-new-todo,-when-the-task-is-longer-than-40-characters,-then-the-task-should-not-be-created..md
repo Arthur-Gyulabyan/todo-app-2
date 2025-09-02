@@ -48,9 +48,9 @@ Use the following structure exactly:
 ```
 
 ## Formatting Requirements
-- FILE and TAG must be ALL UPPERCASE, enclosed in triple equals (===).
+- FILE and TAG labels must be ALL UPPERCASE, enclosed in triple equals (===).
 - FILE = full path inside tests/, e.g. tests/create-todo-given-no-todo-exists.feature.
-- TAG = gwt-<GWT_ID> where <GWT_ID> is from "Current Given-When-Then Information".
+- TAG = gwt-<GWT_ID> where <GWT_ID> is from "Current Given-When-Then Information". Tag values must be ALL lowercase.
 - Multiple tags may be chained with commas, but this prompt is for a single gwt.
 - Output both the .feature file and its matching .test.js file.
 - Output only new or modified files — do not include unchanged files.

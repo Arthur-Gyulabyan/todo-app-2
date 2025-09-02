@@ -3,23 +3,24 @@ import db from '../../infrastructure/db/index.js';
 
 class UpdateTodoCommand {
   static async execute({ todoID, task }) {
-    if (task.length > 40) {
+    // GWT: When a client sends an 'Update Todo' command with a new task that is longer than 40 characters,
+    // then the todo's task should not be updated and an error indicating 'Task Too Long' should be returned.
+    if (task && task.length > 40) {
       throw new Error('Task Too Long');
     }
 
-    const existingTodoData = await db.findById('Todo', todoID);
-
-    if (!existingTodoData) {
+    // GWT: Given a todo exists
+    const existingTodo = await db.findById('Todo', todoID);
+    if (!existingTodo) {
       throw new Error('Todo not found');
     }
 
-    const todo = new Todo(existingTodoData);
-    todo.task = task; // Direct assignment, assuming Todo entity handles `updatedAt` or will be handled implicitly
-    todo.updatedAt = new Date().toISOString(); // Explicitly update updatedAt
+    const todoToUpdate = new Todo(existingTodo);
+    todoToUpdate.task = task;
+    todoToUpdate.updatedAt = new Date().toISOString();
 
-    await db.update('Todo', todo.toJSON());
-
-    return todo.toJSON();
+    await db.update('Todo', todoToUpdate.toJSON());
+    return todoToUpdate.toJSON();
   }
 }
 

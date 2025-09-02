@@ -38,9 +38,9 @@ Use the following structure exactly:
 ```
 
 ## Formatting Requirements
-- FILE and TAG must be ALL UPPERCASE, enclosed in triple equals (===).
+- FILE and TAG labels must be ALL UPPERCASE, enclosed in triple equals (===).
 - FILE = full path under src/, e.g. src/domain/command/CreateTodo.js.
-- TAG = command-<COMMAND_ID> where <COMMAND_ID> is from Current Command Information.
+- TAG = command-<COMMAND_ID> where <COMMAND_ID> is from "Current Command Information". Tag values must be ALL lowercase.
 - Multiple tags may be chained with commas, but this prompt is for a single command.
 - For deleted files, append (deleted) to the file path.
 - Output only new or modified files — do not include unchanged files.

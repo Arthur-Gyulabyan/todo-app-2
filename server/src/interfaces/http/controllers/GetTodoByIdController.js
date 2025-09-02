@@ -6,18 +6,21 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const todo = await GetTodoByIdReadModel.query();
-    if (todo) {
-      res.status(200).json(todo);
-    } else {
-      res.status(400).json({ message: 'Todo not found' });
+
+    if (!todo) {
+      // As per rules, return 400 for errors or not found scenarios.
+      return res.status(400).json({ message: 'No todo found.' });
     }
+
+    // Response schema matches OpenAPI definition.
+    res.status(200).json(todo);
   } catch (err) {
-    // In a real application, log the error for debugging
-    res.status(400).json({ message: 'An unexpected error occurred' });
+    // Catch any unexpected errors and return a 400 status.
+    res.status(400).json({ message: err.message });
   }
 });
 
 export default {
-  routeBase: '/get-todo-by-id',
+  routeBase: '/get-todo-by-id', // Matches read model name in lowercase kebab-case
   router,
 };

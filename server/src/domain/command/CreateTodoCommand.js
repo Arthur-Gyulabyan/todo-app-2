@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import Todo from '../entity/Todo.js';
 import db from '../../infrastructure/db/index.js';
 
@@ -7,7 +8,14 @@ class CreateTodoCommand {
       throw new Error('Task cannot be longer than 40 characters.');
     }
 
-    const todo = new Todo({ task });
+    const now = new Date().toISOString();
+    const todo = new Todo({
+      todoID: uuid(),
+      task,
+      createdAt: now,
+      updatedAt: now,
+    });
+
     await db.insert('Todo', todo.toJSON());
     return todo.toJSON();
   }

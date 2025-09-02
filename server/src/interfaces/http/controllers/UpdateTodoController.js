@@ -9,6 +9,7 @@ router.post('/', async (req, res) => {
     const result = await UpdateTodoCommand.execute({ todoID, task });
     res.status(200).json(result);
   } catch (err) {
+    // Only use 400 for errors, as per rules.
     res.status(400).json({ message: err.message });
   }
 });

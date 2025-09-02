@@ -36,9 +36,9 @@ Use the following structure exactly:
 ```
 
 ## Formatting Requirements
-- FILE and TAG must be ALL UPPERCASE, enclosed in triple equals (===).
+- FILE and TAG labels must be ALL UPPERCASE, enclosed in triple equals (===).
 - FILE = full path under src/, e.g. src/domain/readmodel/GetAllTodos.js.
-- TAG = readmodel-<READMODEL_ID> where <READMODEL_ID> is from "Current ReadModel Information".
+- TAG = readmodel-<READMODEL_ID> where <READMODEL_ID> is from "Current ReadModel Information". Tag values must be ALL lowercase.
 - Multiple tags may be chained with commas, but this prompt is for a single read model.
 - For deleted files, append (deleted) to the file path.
 - Output only new or modified files — do not include unchanged files.

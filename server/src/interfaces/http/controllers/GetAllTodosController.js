@@ -8,7 +8,8 @@ router.get('/', async (req, res) => {
     const todos = await GetAllTodosReadModel.query();
     res.status(200).json(todos);
   } catch (err) {
-    // Only use status codes 200 and 400 as per rules
+    // As per rules, only 200 and 400 status codes are allowed.
+    // An internal error would typically be 500, but we default to 400.
     res.status(400).json({ message: err.message });
   }
 });

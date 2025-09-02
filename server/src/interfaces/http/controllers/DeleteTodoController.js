@@ -5,22 +5,23 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { todoID } = req.body; // Extract todoID from request body as per OpenAPI spec
+    const { todoID } = req.body;
 
     if (!todoID) {
       return res.status(400).json({ message: 'todoID is required' });
     }
 
     await DeleteTodoCommand.execute({ todoID });
-    res.status(200).json({ message: 'Todo Deleted Successfully' }); // OpenAPI 200 response description is 'Success'
+    res.status(200).send();
   } catch (err) {
-    // Catch specific error 'Todo Not Found' from command, and other potential errors.
-    // GWT: "then an error indicating 'Todo Not Found' should be returned"
-    res.status(400).json({ message: err.message }); // OpenAPI 400 response description is 'Bad Request'
+    if (err.message === 'Todo Not Found') {
+      return res.status(400).json({ message: 'Todo Not Found' });
+    }
+    res.status(400).json({ message: err.message });
   }
 });
 
 export default {
-  routeBase: '/delete-todo', // Path from OpenAPI specification
+  routeBase: '/delete-todo',
   router,
 };

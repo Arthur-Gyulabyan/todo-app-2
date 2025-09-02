@@ -28,9 +28,9 @@ Use the following structure exactly:
 ```
 
 ## Formatting Requirements
-- FILE and TAG must be ALL UPPERCASE, enclosed in triple equals (===).
+- FILE and TAG labels must be ALL UPPERCASE, enclosed in triple equals (===).
 - FILE = full path under src/, e.g. src/domain/entity/Todo.js.
-- TAG = entity-<ENTITY_ID> where <ENTITY_ID> is from Current Entity Information.
+- TAG = entity-<ENTITY_ID> where <ENTITY_ID> is from "Current Entity Information". Tag values must be ALL lowercase.
 - Multiple tags may be chained with commas, but this prompt is for a single entity.
 - For deleted files, append (deleted) to the file path.
 - Output only new or modified files — do not include unchanged files.
