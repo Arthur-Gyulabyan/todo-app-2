@@ -11,133 +11,80 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Todo, updateTodoRequestSchema } from "@/lib/validators";
 import { useUpdateTodo } from "@/api/todos";
-import { updateTodoRequestSchema, Todo } from "@/lib/validators";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Pencil } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { DialogFooter } from "@/components/ui/dialog";
+import { useEffect } from "react";
 
 interface UpdateTodoFormProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  todo: Todo | null; // The todo data to pre-fill the form
+  todo: Todo;
+  onSuccess: () => void;
 }
 
-const UpdateTodoForm: React.FC<UpdateTodoFormProps> = ({
-  isOpen,
-  onOpenChange,
-  todo,
-}) => {
-  const [localIsOpen, setLocalIsOpen] = useState(isOpen);
-
-  // Sync internal state with prop
-  if (isOpen !== localIsOpen) {
-    setLocalIsOpen(isOpen);
-  }
+const UpdateTodoForm: React.FC<UpdateTodoFormProps> = ({ todo, onSuccess }) => {
+  const { toast } = useToast();
+  const updateTodoMutation = useUpdateTodo();
 
   const form = useForm<z.infer<typeof updateTodoRequestSchema>>({
     resolver: zodResolver(updateTodoRequestSchema),
     defaultValues: {
-      id: "",
-      task: "",
+      id: todo.id,
+      task: todo.task,
     },
   });
 
-  // Populate form with todo data when it changes
   useEffect(() => {
-    if (todo && isOpen) {
+    if (todo) {
       form.reset({
         id: todo.id,
         task: todo.task,
       });
-    } else if (!isOpen) {
-      form.reset(); // Reset form when dialog closes
     }
-  }, [todo, isOpen, form]);
+  }, [todo, form]);
 
-  const { mutate: updateTodo, isPending } = useUpdateTodo();
-
-  const onSubmit = (values: z.infer<typeof updateTodoRequestSchema>) => {
-    updateTodo(values, {
-      onSuccess: () => {
-        onOpenChange(false); // Close dialog on success
-      },
-    });
-  };
-
-  const handleOpenChange = (open: boolean) => {
-    if (!isPending) { // Prevent closing while pending
-      setLocalIsOpen(open);
-      onOpenChange(open);
-      if (!open) {
-        form.reset(); // Reset form on close
-      }
+  const onSubmit = async (values: z.infer<typeof updateTodoRequestSchema>) => {
+    try {
+      await updateTodoMutation.mutateAsync(values);
+      onSuccess();
+    } catch (error) {
+      toast({
+        title: "Failed to update todo",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
     }
   };
 
   return (
-    <Dialog open={localIsOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Update Todo</DialogTitle>
-          <DialogDescription>
-            Make changes to your todo here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="id"
-              render={() => ( // Render as a hidden field or read-only
-                <FormItem className="hidden">
-                  <FormLabel>ID</FormLabel>
-                  <FormControl>
-                    <Input readOnly {...form.register("id")} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="task"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Task</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Buy groceries" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={isPending}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  "Save Changes"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="task"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Task</FormLabel>
+              <FormControl>
+                <Input placeholder="Update task description" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <DialogFooter>
+          <Button type="submit" disabled={updateTodoMutation.isPending}>
+            {updateTodoMutation.isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Pencil className="mr-2 h-4 w-4" />
+            )}
+            Update Todo
+          </Button>
+        </DialogFooter>
+      </form>
+    </Form>
   );
 };
 

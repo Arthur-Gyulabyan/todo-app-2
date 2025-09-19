@@ -1,94 +1,66 @@
-import { useState } from "react";
-import { Todo } from "@/lib/validators";
+import React, { useState } from "react";
 import DataTable from "@/components/shared/DataTable";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Todo } from "@/lib/validators";
+import { useGetTodos } from "@/api/todos";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import UpdateTodoForm from "./UpdateTodoForm";
 import DeleteTodoDialog from "./DeleteTodoDialog";
 
-interface TodoTableProps {
-  data: Todo[];
-  isLoading: boolean;
-  isError: boolean;
-  errorMessage?: string;
-}
-
-const TodoTable: React.FC<TodoTableProps> = ({
-  data,
-  isLoading,
-  isError,
-  errorMessage,
-}) => {
-  const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+const TodoTable: React.FC = () => {
+  const { data: todos, isLoading, isError } = useGetTodos();
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
   const columns = [
     {
-      id: "task",
       header: "Task",
-      cell: (row: Todo) => <div className="font-medium">{row.task}</div>,
+      accessorKey: "task",
+      className: "font-medium",
     },
     {
-      id: "createdAt",
       header: "Created At",
-      cell: (row: Todo) => (
-        <div className="text-sm text-muted-foreground">
-          {row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "N/A"}
-        </div>
+      accessorKey: "createdAt",
+      cell: (todo: Todo) => (
+        <span className="text-sm text-muted-foreground">
+          {todo.createdAt ? format(new Date(todo.createdAt), "PPP p") : "N/A"}
+        </span>
       ),
     },
     {
-      id: "updatedAt",
       header: "Updated At",
-      cell: (row: Todo) => (
-        <div className="text-sm text-muted-foreground">
-          {row.updatedAt ? new Date(row.updatedAt).toLocaleDateString() : "N/A"}
-        </div>
+      accessorKey: "updatedAt",
+      cell: (todo: Todo) => (
+        <span className="text-sm text-muted-foreground">
+          {todo.updatedAt ? format(new Date(todo.updatedAt), "PPP p") : "N/A"}
+        </span>
       ),
     },
     {
-      id: "actions",
       header: "Actions",
-      cell: (row: Todo) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+      cell: (todo: Todo) => (
+        <div className="flex space-x-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setSelectedTodo(todo);
+              setIsUpdateDialogOpen(true);
+            }}
+            aria-label={`Edit ${todo.task}`}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <DeleteTodoDialog todoId={todo.id} onSuccess={() => {}}>
+            <Button variant="ghost" size="icon" aria-label={`Delete ${todo.task}`}>
+              <Trash2 className="h-4 w-4 text-destructive" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                setSelectedTodo(row);
-                setIsUpdateFormOpen(true);
-              }}
-            >
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                setSelectedTodo(row);
-                setIsDeleteDialogOpen(true);
-              }}
-              className="text-red-600"
-            >
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </DeleteTodoDialog>
+        </div>
       ),
+      className: "w-24",
     },
   ];
 
@@ -96,24 +68,22 @@ const TodoTable: React.FC<TodoTableProps> = ({
     <>
       <DataTable
         columns={columns}
-        data={data}
+        data={todos || []}
         isLoading={isLoading}
         isError={isError}
-        errorMessage={errorMessage}
-        noDataMessage="No todos found. Create one to get started!"
+        emptyMessage="No todos found. Create one to get started!"
       />
 
-      <UpdateTodoForm
-        isOpen={isUpdateFormOpen}
-        onOpenChange={setIsUpdateFormOpen}
-        todo={selectedTodo}
-      />
-
-      <DeleteTodoDialog
-        isOpen={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-        todo={selectedTodo}
-      />
+      {selectedTodo && (
+        <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Update Todo</DialogTitle>
+            </DialogHeader>
+            <UpdateTodoForm todo={selectedTodo} onSuccess={() => setIsUpdateDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 };

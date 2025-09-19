@@ -2,14 +2,17 @@ import db from '../../infrastructure/db/index.js';
 
 class DeleteTodoCommand {
   static async execute({ id }) {
-    const todoToDelete = await db.findById('Todo', id);
-
-    if (!todoToDelete) {
+    const existingTodo = await db.findById('Todo', id);
+    if (!existingTodo) {
       throw new Error('Todo Not Found');
     }
 
-    await db.remove('Todo', id);
-    return todoToDelete;
+    const removed = await db.remove('Todo', id);
+    if (!removed) {
+      throw new Error('Failed to delete Todo');
+    }
+
+    return existingTodo;
   }
 }
 

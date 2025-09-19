@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Table,
   TableBody,
@@ -6,15 +7,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
-// Define a Column interface for type safety and flexibility
 interface Column<T> {
-  id: string; // Unique identifier for the column
-  header: string | React.ReactNode; // Content for the table header
-  cell: (row: T) => React.ReactNode; // Function to render the cell content
+  header: string;
+  accessorKey?: keyof T;
+  cell?: (item: T) => React.ReactNode;
+  className?: string;
 }
 
 interface DataTableProps<T> {
@@ -22,69 +21,63 @@ interface DataTableProps<T> {
   data: T[];
   isLoading?: boolean;
   isError?: boolean;
-  errorMessage?: string;
-  noDataMessage?: string;
-  skeletonRowCount?: number;
+  emptyMessage?: string;
 }
 
-const DataTable = <T,>({
+const DataTable = <T extends Record<string, any>>({
   columns,
   data,
-  isLoading = false,
-  isError = false,
-  errorMessage = "Failed to load data.",
-  noDataMessage = "No data available.",
-  skeletonRowCount = 5,
+  isLoading,
+  isError,
+  emptyMessage = "No data available.",
 }: DataTableProps<T>) => {
-  if (isError) {
+  if (isLoading) {
     return (
-      <Alert variant="destructive">
-        <Terminal className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{errorMessage}</AlertDescription>
-      </Alert>
+      <div className="flex justify-center items-center h-48">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
-  const renderSkeletons = () => {
-    return Array.from({ length: skeletonRowCount }).map((_, rowIndex) => (
-      <TableRow key={rowIndex}>
-        {columns.map((column) => (
-          <TableCell key={column.id}>
-            <Skeleton className="h-4 w-full" />
-          </TableCell>
-        ))}
-      </TableRow>
-    ));
-  };
-
-  const hasData = data && data.length > 0;
+  if (isError) {
+    return (
+      <div className="flex justify-center items-center h-48 text-destructive">
+        Failed to load data. Please try again.
+      </div>
+    );
+  }
 
   return (
-    <div className="rounded-md border w-full">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map((column) => (
-              <TableHead key={column.id}>{column.header}</TableHead>
+            {columns.map((column, index) => (
+              <TableHead key={index} className={column.className}>
+                {column.header}
+              </TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading ? (
-            renderSkeletons()
-          ) : hasData ? (
+          {data.length ? (
             data.map((row, rowIndex) => (
-              <TableRow key={`row-${rowIndex}`}>
-                {columns.map((column) => (
-                  <TableCell key={column.id}>{column.cell(row)}</TableCell>
+              <TableRow key={rowIndex}>
+                {columns.map((column, colIndex) => (
+                  <TableCell key={colIndex} className={column.className}>
+                    {column.cell
+                      ? column.cell(row)
+                      : column.accessorKey
+                      ? String(row[column.accessorKey])
+                      : null}
+                  </TableCell>
                 ))}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                {noDataMessage}
+              <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                {emptyMessage}
               </TableCell>
             </TableRow>
           )}

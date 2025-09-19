@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Todo App API Specification
-  version: '202'
+  version: '235'
   description: API documentation for the Todo App bounded context.
 servers:
   - url: /api/v1
@@ -89,7 +89,7 @@ paths:
         - TodoApp
       responses:
         '200':
-          description: Successful retrieval of data.
+          description: Successful response
           content:
             application/json:
               schema:
@@ -107,7 +107,7 @@ paths:
         - TodoApp
       responses:
         '200':
-          description: Successful retrieval of data.
+          description: Successful response
           content:
             application/json:
               schema:
@@ -122,6 +122,7 @@ paths:
           required: true
           schema:
             type: string
+          description: The unique identifier for the Todo.
 components:
   schemas:
     Error:

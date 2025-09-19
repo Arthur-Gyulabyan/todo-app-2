@@ -4,108 +4,131 @@ import {
   CreateTodoRequest,
   UpdateTodoRequest,
   DeleteTodoRequest,
-  ApiError,
+  errorSchema,
 } from "@/lib/validators";
 import { api } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
-// Fetch all todos
-export const useGetAllTodos = () => {
+const TODO_QUERY_KEY = ["todos"];
+
+export const useGetTodos = () => {
   const { toast } = useToast();
-  return useQuery<Todo[], ApiError>({
-    queryKey: ["todos"],
-    queryFn: () => api.get("/get-all-todos"),
-    onError: (error) => {
-      toast({
-        title: "Error fetching todos",
-        description: error.message || "An unknown error occurred.",
-        variant: "destructive",
-      });
+  return useQuery<Todo[], Error>({
+    queryKey: TODO_QUERY_KEY,
+    queryFn: async () => {
+      try {
+        return await api.get<Todo[]>("/get-all-todos");
+      } catch (error) {
+        const parsedError = errorSchema.safeParse(error);
+        toast({
+          title: "Error fetching todos",
+          description: parsedError.success ? parsedError.data.message : "Failed to load todos.",
+          variant: "destructive",
+        });
+        throw error;
+      }
     },
   });
 };
 
-// Fetch a single todo by ID
 export const useGetTodoById = (id: string | undefined) => {
   const { toast } = useToast();
-  return useQuery<Todo, ApiError>({
-    queryKey: ["todos", id],
-    queryFn: () => api.get(`/get-todo-by-id/${id}`),
-    enabled: !!id, // Only run query if id is available
-    onError: (error) => {
-      toast({
-        title: `Error fetching todo ${id}`,
-        description: error.message || "An unknown error occurred.",
-        variant: "destructive",
-      });
+  return useQuery<Todo, Error>({
+    queryKey: [...TODO_QUERY_KEY, id],
+    queryFn: async () => {
+      if (!id) throw new Error("Todo ID is required.");
+      try {
+        return await api.get<Todo>(`/get-todo-by-id/${id}`);
+      } catch (error) {
+        const parsedError = errorSchema.safeParse(error);
+        toast({
+          title: "Error fetching todo",
+          description: parsedError.success ? parsedError.data.message : "Failed to load todo.",
+          variant: "destructive",
+        });
+        throw error;
+      }
     },
+    enabled: !!id,
   });
 };
 
-// Create a new todo
 export const useCreateTodo = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  return useMutation<Todo, ApiError, CreateTodoRequest>({
-    mutationFn: (newTodo) => api.post("/create-todo", newTodo),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-      toast({
-        title: "Todo created successfully!",
-        description: `Task: "${data.task}"`,
-      });
+  return useMutation<Todo, Error, CreateTodoRequest>({
+    mutationFn: async (newTodo: CreateTodoRequest) => {
+      try {
+        return await api.post<Todo>("/create-todo", newTodo);
+      } catch (error) {
+        const parsedError = errorSchema.safeParse(error);
+        toast({
+          title: "Error creating todo",
+          description: parsedError.success ? parsedError.data.message : "Failed to create todo.",
+          variant: "destructive",
+        });
+        throw error;
+      }
     },
-    onError: (error) => {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TODO_QUERY_KEY });
       toast({
-        title: "Failed to create todo",
-        description: error.message || "An unknown error occurred.",
-        variant: "destructive",
+        title: "Success!",
+        description: "Todo created successfully.",
       });
     },
   });
 };
 
-// Update an existing todo
 export const useUpdateTodo = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  return useMutation<Todo, ApiError, UpdateTodoRequest>({
-    mutationFn: (updatedTodo) => api.post("/update-todo", updatedTodo), // OpenAPI uses POST
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-      toast({
-        title: "Todo updated successfully!",
-        description: `ID: ${data.id}, Task: "${data.task}"`,
-      });
+  return useMutation<Todo, Error, UpdateTodoRequest>({
+    mutationFn: async (updatedTodo: UpdateTodoRequest) => {
+      try {
+        return await api.post<Todo>("/update-todo", updatedTodo);
+      } catch (error) {
+        const parsedError = errorSchema.safeParse(error);
+        toast({
+          title: "Error updating todo",
+          description: parsedError.success ? parsedError.data.message : "Failed to update todo.",
+          variant: "destructive",
+        });
+        throw error;
+      }
     },
-    onError: (error) => {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TODO_QUERY_KEY });
       toast({
-        title: "Failed to update todo",
-        description: error.message || "An unknown error occurred.",
-        variant: "destructive",
+        title: "Success!",
+        description: "Todo updated successfully.",
       });
     },
   });
 };
 
-// Delete a todo
 export const useDeleteTodo = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  return useMutation<Todo, ApiError, DeleteTodoRequest>({
-    mutationFn: (deleteRequest) => api.post("/delete-todo", deleteRequest), // OpenAPI uses POST
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-      toast({
-        title: "Todo deleted successfully!",
-        description: `Task: "${data.task}" was removed.`,
-      });
+  return useMutation<Todo, Error, DeleteTodoRequest>({
+    mutationFn: async (todoToDelete: DeleteTodoRequest) => {
+      try {
+        return await api.post<Todo>("/delete-todo", todoToDelete);
+      } catch (error) {
+        const parsedError = errorSchema.safeParse(error);
+        toast({
+          title: "Error deleting todo",
+          description: parsedError.success ? parsedError.data.message : "Failed to delete todo.",
+          variant: "destructive",
+        });
+        throw error;
+      }
     },
-    onError: (error) => {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TODO_QUERY_KEY });
       toast({
-        title: "Failed to delete todo",
-        description: error.message || "An unknown error occurred.",
-        variant: "destructive",
+        title: "Success!",
+        description: "Todo deleted successfully.",
       });
     },
   });
